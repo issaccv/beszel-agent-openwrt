@@ -21,7 +21,7 @@ Download the appropriate IPK from [Releases](../../releases) page.
 Or directly via wget:
 
 ```sh
-wget https://github.com/vernette/beszel-agent-openwrt/releases/download/vX.X.X-24.10/beszel-agent_X.X.X-1_YOUR_ARCH.ipk
+wget -O beszel-agent.ipk https://github.com/vernette/beszel-agent-openwrt/releases/download/vX.X.X-24.10/beszel-agent_X.X.X-1_YOUR_ARCH.ipk
 ```
 
 > [!NOTE]
@@ -30,7 +30,7 @@ wget https://github.com/vernette/beszel-agent-openwrt/releases/download/vX.X.X-2
 ### 3. Install
 
 ```sh
-opkg install beszel-agent_*.ipk
+opkg install beszel-agent*.ipk
 ```
 
 ## Configuration
