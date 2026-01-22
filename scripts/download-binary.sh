@@ -35,14 +35,10 @@ tar -xzf binary.tar.gz beszel-agent || {
 
 chmod +x beszel-agent
 
-if command -v upx >/dev/null 2>&1; then
-  echo "Compressing binary with UPX..."
-  upx --best --lzma beszel-agent || {
-    echo "WARNING: UPX compression failed, continuing with uncompressed binary" >&2
-  }
-else
-  echo "WARNING: UPX not found, skipping compression" >&2
-fi
+echo "Compressing binary with UPX..."
+upx --best --lzma beszel-agent || {
+  echo "WARNING: UPX compression failed, continuing with uncompressed binary" >&2
+}
 
 mkdir -p "$OUTPUT_DIR"
 mv beszel-agent "$OUTPUT_DIR/"
