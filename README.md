@@ -21,11 +21,11 @@ Download the appropriate IPK from [Releases](../../releases) page.
 Or directly via wget:
 
 ```sh
-wget -O beszel-agent.ipk https://github.com/vernette/beszel-agent-openwrt/releases/download/vX.X.X-24.10/beszel-agent_X.X.X-1_YOUR_ARCH.ipk
+wget -O beszel-agent.ipk https://github.com/vernette/beszel-agent-openwrt/releases/download/vX.X.X-OPENWRT_VERSION/beszel-agent-r1_X.X.X-1_YOUR_ARCH.ipk
 ```
 
 > [!NOTE]
-> Replace `X.X.X` with the version number and `YOUR_ARCH` with your device architecture
+> Replace `X.X.X` with the version number, `OPENWRT_VERSION` with your OpenWrt version and `YOUR_ARCH` with your device architecture
 
 ### 3. Install
 
