@@ -92,7 +92,18 @@ jobs:
           TAG="${{ needs.validate-versions.outputs.latest_upstream_version }}"
           echo "Latest version: $TAG"
 
-          GOARCH=$(./scripts/arch-mapper.sh "${{ matrix.arch }}")
+          case "${{ matrix.arch }}" in
+            aarch64_*) GOARCH="arm64" ;;
+            arm_*) GOARCH="arm" ;;
+            mipsel_*) GOARCH="mipsle" ;;
+            mips_*) GOARCH="mips" ;;
+            x86_64) GOARCH="amd64" ;;
+            *)
+              echo "Unknown architecture: ${{ matrix.arch }}" >&2
+              exit 1
+              ;;
+          esac
+
           echo "Go architecture: $GOARCH"
 
           echo "tag=$TAG" >> $GITHUB_OUTPUT
