@@ -14,7 +14,6 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       latest_upstream_version: ${{ steps.validate.outputs.latest_upstream_version }}
-      latest_repo_tag: ${{ steps.validate.outputs.latest_repo_tag }}
       should_build: ${{ steps.validate.outputs.should_build }}
     steps:
       - name: Validate versions
@@ -33,9 +32,8 @@ jobs:
           echo "Repo base version: $REPO_VERSION"
 
           if [ "$LATEST_UPSTREAM" != "$REPO_VERSION" ]; then
-            echo "New version detected! Building $LATEST_UPSTREAM → $LATEST_UPSTREAM"
+            echo "New version detected! Building $REPO_VERSION -> $LATEST_UPSTREAM"
             echo "latest_upstream_version=$LATEST_UPSTREAM" >> $GITHUB_OUTPUT
-            echo "latest_repo_tag=$LATEST_UPSTREAM-${{ matrix.branch }}" >> $GITHUB_OUTPUT
             echo "should_build=true" >> $GITHUB_OUTPUT
           else
             echo "Versions match: $LATEST_UPSTREAM == $REPO_VERSION. No build needed."
@@ -259,9 +257,9 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           fail_on_unmatched_files: true
-          tag_name: ${{ needs.validate-versions.outputs.latest_repo_tag }}
-          name: ${{ needs.validate-versions.outputs.latest_repo_tag }} for OpenWrt ${{ matrix.branch }}
+          tag_name: ${{ needs.validate-versions.outputs.latest_upstream_version }}-${{ matrix.branch }}
+          name: ${{ needs.validate-versions.outputs.latest_upstream_version }} for OpenWrt ${{ matrix.branch }}
           target_commitish: gh-pages
           body: |
-            ### Beszel Agent ${{ needs.validate-versions.outputs.latest_repo_tag }} for OpenWrt ${{ matrix.branch }}
+            ### Beszel Agent ${{ needs.validate-versions.outputs.latest_upstream_version }} for OpenWrt ${{ matrix.branch }}
           files: ./**/*.ipk
