@@ -2,7 +2,7 @@
 
 Lightweight server monitoring agent packaged for OpenWrt routers and devices.
 
-[Beszel](https://github.com/henrygd/beszel) is a lightweight server monitoring hub with historical data, docker stats, and alerts. This repository provides pre-built packages for easy installation on OpenWrt 25.12.0-rc4 (ipq60xx architecture).
+[Beszel](https://github.com/henrygd/beszel) is a lightweight server monitoring hub with historical data, docker stats, and alerts. This repository provides pre-built packages for easy installation on OpenWrt 25.12.0-rc4 (aarch64_generic architecture).
 
 > [!NOTE]
 > Packages may be in APK or IPK format depending on OpenWrt SDK version. Check the release notes for your specific package format.

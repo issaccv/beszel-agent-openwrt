@@ -62,7 +62,7 @@ jobs:
         branch:
           - 25.12.0-rc4
         arch:
-          - aarch64_cortex-a53
+          - aarch64_generic
     container:
       image: openwrt/sdk:${{ matrix.arch }}-${{ matrix.branch }}
       options: --user root
@@ -280,5 +280,5 @@ jobs:
           body: |
             ### Beszel Agent ${{ needs.validate-versions.outputs.latest_upstream_version }} for OpenWrt ${{ matrix.branch }}
             
-            Built for ipq60xx (aarch64_cortex-a53) architecture.
+            Built for aarch64_generic architecture.
           files: ./**/*.{apk,ipk}
