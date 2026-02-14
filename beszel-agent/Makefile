@@ -1,3 +1,4 @@
+# OpenWrt Package Makefile for Beszel Agent
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=beszel-agent
