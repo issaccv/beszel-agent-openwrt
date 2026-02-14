@@ -1,4 +1,4 @@
-name: Build Beszel Agent IPK
+name: Build Beszel Agent APK
 
 on:
   workflow_dispatch:
@@ -60,15 +60,9 @@ jobs:
       fail-fast: false
       matrix:
         branch:
-          - openwrt-24.10
+          - openwrt-25.12
         arch:
           - aarch64_cortex-a53
-          - aarch64_cortex-a72
-          - aarch64_generic
-          - arm_cortex-a7_neon-vfpv4
-          - arm_cortex-a9
-          - mipsel_24kc
-          - x86_64
     container:
       image: openwrt/sdk:${{ matrix.arch }}-${{ matrix.branch }}
       options: --user root
@@ -136,7 +130,7 @@ jobs:
           echo "=== Package structure ==="
           ls -laR package/beszel-agent/files/
 
-      - name: Build IPK
+      - name: Build APK
         working-directory: /builder
         env:
           VERSION: ${{ steps.prepare.outputs.version }}
@@ -153,52 +147,52 @@ jobs:
           BRANCH: ${{ matrix.branch }}
         run: |
           set -euo pipefail
-          echo "=== Searching for IPK files ==="
-          find /builder/bin/packages -name "beszel-agent*.ipk" -ls || true
+          echo "=== Searching for APK files ==="
+          find /builder/bin/packages -name "beszel-agent*.apk" -ls || true
 
-          mkdir -p $GITHUB_WORKSPACE/ipk-output
-          find /builder/bin/packages -name "beszel-agent*.ipk" -exec cp {} $GITHUB_WORKSPACE/ipk-output/ \;
-          cd $GITHUB_WORKSPACE/ipk-output
+          mkdir -p $GITHUB_WORKSPACE/apk-output
+          find /builder/bin/packages -name "beszel-agent*.apk" -exec cp {} $GITHUB_WORKSPACE/apk-output/ \;
+          cd $GITHUB_WORKSPACE/apk-output
 
-          echo "=== Files in ipk-output ==="
+          echo "=== Files in apk-output ==="
           ls -la
 
-          IPK_COUNT=$(ls beszel-agent*.ipk 2>/dev/null | wc -l)
+          APK_COUNT=$(ls beszel-agent*.apk 2>/dev/null | wc -l)
 
-          if [[ $IPK_COUNT -eq 0 ]]; then
-            echo "ERROR: No IPK file found!" >&2
+          if [[ $APK_COUNT -eq 0 ]]; then
+            echo "ERROR: No APK file found!" >&2
             exit 1
           fi
 
-          echo "Found $IPK_COUNT IPK file(s)"
+          echo "Found $APK_COUNT APK file(s)"
 
           VERSION_DIR="${BRANCH/openwrt-}/$ARCH"
           mkdir -p "$VERSION_DIR"
-          mv *.ipk "$VERSION_DIR/"
+          mv *.apk "$VERSION_DIR/"
           cd "$VERSION_DIR"
 
-          sha256sum *.ipk > SHA256SUMS
+          sha256sum *.apk > SHA256SUMS
 
-          cd $GITHUB_WORKSPACE/ipk-output
-          tar -cvf $GITHUB_WORKSPACE/ipk-$BRANCH-$ARCH.tar "$VERSION_DIR"
+          cd $GITHUB_WORKSPACE/apk-output
+          tar -cvf $GITHUB_WORKSPACE/apk-$BRANCH-$ARCH.tar "$VERSION_DIR"
 
-      - name: Validate IPK package
+      - name: Validate APK package
         env:
           ARCH: ${{ matrix.arch }}
           BRANCH: ${{ matrix.branch }}
         run: |
           set -euo pipefail
           VERSION_DIR="${BRANCH/openwrt-}/$ARCH"
-          cd ipk-output/$VERSION_DIR
+          cd apk-output/$VERSION_DIR
 
           echo "=== Validating packages in $VERSION_DIR ==="
-          for ipk in *.ipk; do
-            size=$(stat -f%z "$ipk" 2>/dev/null || stat -c%s "$ipk")
+          for apk in *.apk; do
+            size=$(stat -f%z "$apk" 2>/dev/null || stat -c%s "$apk")
             if [[ $size -lt 10000 ]]; then
-              echo "ERROR: IPK file $ipk is too small ($size bytes)" >&2
+              echo "ERROR: APK file $apk is too small ($size bytes)" >&2
               exit 1
             fi
-            echo "✓ $ipk size: $size bytes"
+            echo "✓ $apk size: $size bytes"
           done
 
           sha256sum -c SHA256SUMS
@@ -208,10 +202,10 @@ jobs:
         if: success()
         uses: actions/upload-artifact@v4
         with:
-          name: ipk-${{ matrix.branch }}-${{ matrix.arch }}
+          name: apk-${{ matrix.branch }}-${{ matrix.arch }}
           path: |
-            ipk-output/**/*.ipk
-            ipk-output/**/SHA256SUMS
+            apk-output/**/*.apk
+            apk-output/**/SHA256SUMS
           if-no-files-found: error
           retention-days: 30
 
@@ -225,12 +219,12 @@ jobs:
       - name: Download artifacts
         uses: actions/download-artifact@v4
         with:
-          pattern: ipk-*
+          pattern: apk-*
 
       - name: Prepare files
         run: |
           mkdir public
-          find . -name 'ipk-*.tar' -exec tar -C ./public -xvf {} \;
+          find . -name 'apk-*.tar' -exec tar -C ./public -xvf {} \;
 
       - name: Deploy to GH pages
         uses: peaceiris/actions-gh-pages@v4
@@ -251,18 +245,18 @@ jobs:
       max-parallel: 1
       matrix:
         branch:
-          - '24.10'
+          - '25.12'
     steps:
       - name: Download artifacts
         uses: actions/download-artifact@v4
         with:
-          pattern: ipk-*
+          pattern: apk-*
 
       - name: Prepare files
         env:
           BRANCH: ${{ matrix.branch }}
         run: |
-          find . -name "ipk-openwrt-$BRANCH-*.tar" -exec tar -xvf {} --wildcards '*.ipk' \;
+          find . -name "apk-openwrt-$BRANCH-*.tar" -exec tar -xvf {} --wildcards '*.apk' \;
 
       - name: Upload release assets
         uses: softprops/action-gh-release@v2
@@ -273,4 +267,4 @@ jobs:
           target_commitish: gh-pages
           body: |
             ### Beszel Agent ${{ needs.validate-versions.outputs.latest_upstream_version }} for OpenWrt ${{ matrix.branch }}
-          files: ./**/*.ipk
+          files: ./**/*.apk

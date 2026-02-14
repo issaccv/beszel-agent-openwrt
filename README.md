@@ -2,7 +2,7 @@
 
 Lightweight server monitoring agent packaged for OpenWrt routers and devices.
 
-[Beszel](https://github.com/henrygd/beszel) is a lightweight server monitoring hub with historical data, docker stats, and alerts. This repository provides pre-built IPK packages for easy installation on OpenWrt.
+[Beszel](https://github.com/henrygd/beszel) is a lightweight server monitoring hub with historical data, docker stats, and alerts. This repository provides pre-built APK packages for easy installation on OpenWrt 25.12.
 
 ## Installation
 
@@ -16,12 +16,12 @@ opkg print-architecture | awk 'BEGIN {max=0} {if ($3 > max) {max = $3; arch = $2
 
 ### 2. Download Package
 
-Download the appropriate IPK from [Releases](../../releases) page.
+Download the appropriate APK from [Releases](../../releases) page.
 
 Or directly via wget:
 
 ```sh
-wget -O beszel-agent.ipk https://github.com/vernette/beszel-agent-openwrt/releases/download/vX.X.X-OPENWRT_VERSION/beszel-agent-r1_X.X.X-1_YOUR_ARCH.ipk
+wget -O beszel-agent.apk https://github.com/vernette/beszel-agent-openwrt/releases/download/vX.X.X-OPENWRT_VERSION/beszel-agent-r1_X.X.X-1_YOUR_ARCH.apk
 ```
 
 > [!NOTE]
@@ -30,7 +30,7 @@ wget -O beszel-agent.ipk https://github.com/vernette/beszel-agent-openwrt/releas
 ### 3. Install
 
 ```sh
-opkg install beszel-agent*.ipk
+apk add beszel-agent*.apk
 ```
 
 ## Configuration
